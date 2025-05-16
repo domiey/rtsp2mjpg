@@ -1,7 +1,4 @@
 [![license](https://img.shields.io/github/license/beardedtek-com/fevr)](https://github.com/BeardedTek-com/rtsp2mjpg/blob/0.1.0/LICENSE)
-[![Discussions](https://img.shields.io/github/discussions/beardedtek-com/rtsp2mjpg)](https://github.com/BeardedTek-com/rtsp2mjpg/discussions)
-[![telegram](https://img.shields.io/badge/Telegram-@beardedtek-blue)](https://t.me/BeardedTek)
-[![twitter-follow](https://img.shields.io/twitter/follow/beardedtek?style=social)](https://twitter.com/intent/user?screen_name=beardedtek)
 
 # rtsp2mjpg
 ## Converts an rtsp/rtmp stream into an mjpeg stream and jpeg snapshots
