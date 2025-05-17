@@ -5,17 +5,16 @@ services:
   rtsp2mjpg:
     container_name: rtsp2mjpg
     build: .
-    image: beardedtek/rtsp2mjpg
+    image: cryono/rtsp2mjpg:latest
     restart: unless-stopped
-    volumes:
-      - ./timelapse:/data/timelapse
     ports:
-      - 8880:8000
+      - 8880:8000    # MJPEG stream
+      - 8890:8090    # Snapshot proxy
     environment:
       # These are the defaults as defined in the Dockerfile.  You only need to set the values you wish to change
       - MJPG_RESOLUTION=${MJPG_RESOLUTION:--1}
       - MJPG_FPS=${MJPG_FPS:-5}
       - JPG_RESOLUTION=${JPG_RESOLUTION:-1}
       - SOURCE_URL=${SOURCE_URL:-rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4}
-      - TIMELAPSE_DIR=${TIMELAPSE_DIR:/data/timelapse/}
-      - TIMELAPSE_RESOLUTION=${TIMELAPSE_RESOLUTION}
+      - CAM_URL=${CAM_URL:-http://host.docker.internal:8880/jpg.cgi}
+      - INTERVAL=${INTERVAL:-5}

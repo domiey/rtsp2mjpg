@@ -1,0 +1,14 @@
+Address: "0.0.0.0:8000"
+
+InheritEnv:
+  - MJPG_RESOLUTION
+  - MJPG_FPS
+  - JPG_RESOLUTION
+  - SOURCE_URL
+
+HandlerList:
+  - FileExt: ".cgi"
+    Handler: bash
+
+Logging:
+  Level: panic
