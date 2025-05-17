@@ -1,87 +1,95 @@
-[![license](https://img.shields.io/github/license/beardedtek-com/fevr)](https://github.com/BeardedTek-com/rtsp2mjpg/blob/0.1.0/LICENSE)
+[![license](https://img.shields.io/github/license/domiey/rtsp2mjpg)](https://github.com/domiey/rtsp2mjpg/blob/main/LICENSE)
+
 
 # rtsp2mjpg
-## Converts an rtsp/rtmp stream into an mjpeg stream and jpeg snapshots
-Intended to provide OctoPrint with an MJPEG stream and JPG snapshots via an RTSP/RTMP feed.
+## Convert RTSP/RTMP streams to MJPEG and JPEG snapshots  
+A lightweight solution for OctoPrint (or other tools) to access MJPEG streaming and JPG snapshots via an RTSP/RTMP video source.
 
+---
 
+## ⚠️ Security Notice
+**No authentication, encryption, or access control is implemented.**  
+You are responsible for securing this container and the network it runs in.
 
-# A note on security
-## ***THERE ARE NO SECURITY MECHANISMS IMPLEMENTED IN THIS SETUP***
-### It is up to the user to implement security measures to isolate this server.
-### There are no plans to add password protection, ACL's or any other form of protection.
-### There are, however, options to add security including nginx, traefik, authelia, and many many more solutions.
-### ***USER BEWARE!*** The developers are NOT liable for any security issues imposed by you deploying this solution!
+Suggestions for securing access:
+- Run behind a reverse proxy (e.g. Nginx, Traefik)
+- Add basic auth, IP restrictions, or VPN
+- Use firewall rules to limit access
 
-# Features
-## Stream mjpg
-    - http://<ip>:8000/mjpg.cgi
-        - Outputs MJPG Stream via HTTP
-## Take snapshot
-    - http://<ip>:8000/jpg.cgi
-        - Outputs JPG via HTTP
-## Take timelapse and save it to timelapse folder
-    - http://<ip>:8000/layer.cgi
-        - Saves JPG to /data/timelapse for processing
-        - This is intended to be used in conjunction with Octoprint.
-    - Octoprint Setup:
-        - In Octoprint UI:
-        - Click on Setup
-        - Navigate to Event Manager
-        - Add an Event by clicking +Add
-        - Select ZChange for Event
-        - Enter the following into Command:
-            - curl http://<rtsp2mjpg_ip>:<port>/layer.cgi
-        - Select 'system' for type
-        - Ensure 'Enabled' is checked.
-        - Click Close
-        - Click Save
-        - Restart OctoPrint
-        
+> **Use at your own risk.**
 
+---
 
-# Planned Features (Not yet implemented)
-## Generate timelapse video
-    - http://<ip>:8000/timelapse.cgi
-        - This will eventually generate a timelapse from snapshots in /data/timelapse folder
+## Features
 
-# Install
-## docker-compose is the preferred method
+### 🔴 MJPEG Stream
+- Accessible via HTTP:
+  ```
+  http://<ip>:8000/mjpg.cgi
+  ```
 
-### Clone this repository
+### 📸 JPEG Snapshot
+- Returns a single frame from the video stream:
+  ```
+  http://<ip>:8000/jpg.cgi
+  ```
+
+### 🖼️ Snapshot Proxy (live snapshot image for polling)
+- Continuously refreshed JPEG available at:
+  ```
+  http://<ip>:8090/snapshot.jpg
+  ```
+- Useful for OctoPrint’s "Snapshot URL" or embedding in dashboards
+
+---
+
+## Installation
+
+### 📦 Docker Compose (recommended)
+
+#### 1. Clone this repository
+```bash
+git clone https://github.com/domiey/rtsp2mjpg
+cd rtsp2mjpg
 ```
-git clone https://github.com/beardedtek-com/rtsp2mjpg
-```
 
-### Create .env file
-```
+#### 2. Create your `.env` file
+```bash
 cp example.env .env
 ```
 
-### Edit .env file
-Edit the contents of the .env file
-SOURCE_URL can be any valid video source (or should be able to)
-ffmpeg will automatically scale the resolution according to the original's aspect ratio.
-```
-MJPG_RESOLUTION=720
-MJPG_FPS=5
-JPG_RESOLUTION=720
-SOURCE_URL=rtsp://WYZE-BRIDGE:8554/camera-name
+#### 3. Edit `.env` with your stream URL
+```env
+# MJPEG Stream Config
+MJPG_RESOLUTION=1080
+MJPG_FPS=10
+JPG_RESOLUTION=1080
+SOURCE_URL=rtsp://user:pass@camera-ip/stream1
+
+# Snapshot Proxy Config
+CAM_URL=http://localhost:8000/jpg.cgi
+INTERVAL=5
 ```
 
-### Bring it all up!
-```
+#### 4. Launch the stack
+```bash
 docker-compose up -d
 ```
 
-### Access MJPG Stream
-http://<hostname>:8880/cgi-bin/mjpg.cgi
+---
 
-### Access Screenshot
-http://<hostname>:8880/cgi-bin/jpg.cgi
+## 🔗 Stream Access
 
-# Support
-No support is implied.  This worked when I wrote it and I intend to update it as I have time.
-Feel free to submit a PR or an issue if something doesn't work, but this is low on my priority list unless it breaks for me.
+| Endpoint              | Description                        |
+|-----------------------|------------------------------------|
+| `/mjpg.cgi`           | MJPEG stream                       |
+| `/jpg.cgi`            | On-demand JPEG snapshot            |
+| `/snapshot.jpg`       | Automatically updated snapshot     |
 
-Feel free to fork this and submit a PR.  I will get to it eventually.
+Example URLs (assuming local IP `192.168.1.100`):
+
+```
+http://192.168.1.100:8880/mjpg.cgi
+http://192.168.1.100:8880/jpg.cgi
+http://192.168.1.100:8890/snapshot.jpg
+```
